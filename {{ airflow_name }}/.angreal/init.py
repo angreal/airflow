@@ -6,8 +6,8 @@ from angreal.integrations.venv import VirtualEnv
 
 
 def init():
-    os.chdir("airflow-provider-this-provider")
-    VirtualEnv(".venv", now=True, requirements=".[dev]")
+    os.chdir("{{ airflow_name }}")
+    VirtualEnv(".venv", now=True, requirements="dev_requirements.txt")
     g = Git()
     g.init()
     g.add('.')
@@ -21,4 +21,4 @@ def init():
         shell=True,
     )
 
-    g.commit("-am 'airflow-provider-this-provider initialized via angreal'")
+    g.commit("-am '{{ airflow_name }} initialized via angreal'")

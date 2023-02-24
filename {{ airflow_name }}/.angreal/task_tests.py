@@ -15,21 +15,24 @@ venv_python = VirtualEnv(venv_location).ensure_directories.env_exe
 
 @venv_required(venv_location,requirements=requirements)
 @angreal.command(name='run-tests', about="run our test suite. default is unit tests only")
-@angreal.argument(name="integration", long="integration", short='i', takes_value=False, help="run integration tests only")
+@angreal.argument(name="integrity", long="integrity", short='i', takes_value=False, help="run integrity tests only")
 @angreal.argument(name="full", long="full", short='f', takes_value=False, help="run integration and unit tests")
 @angreal.argument(name="open", long="open", short='o', takes_value=False, help="open results in web browser")
-def run_tests(integration=False,full=False,open=False):
+def run_tests(integrity=False,full=False,open=False):
 
     if full:
-        integration=False
+        integrity=False
 
     output_file = os.path.realpath(os.path.join(cwd,'htmlcov','index.html'))
 
-    if integration:
-        subprocess.run(f"{venv_python} -m pytest -vvv --cov=dags --cov-report html --cov-report term tests/integrity",shell=True, cwd=cwd)
+    print(integrity,full,open)
+
+    if integrity:
+        subprocess.run(f"{venv_python} -m pytest -vvv tests/integrity",shell=True, cwd=cwd)
+        open=False
     if full:
         subprocess.run(f"{venv_python} -m pytest -vvv --cov=dags --cov-report html --cov-report term tests/",shell=True, cwd=cwd)
-    if not integration and not full:
+    if not integrity and not full:
         subprocess.run(f"{venv_python} -m pytest -vvv --cov=dags --cov-report html --cov-report term tests/unit",shell=True, cwd=cwd)
     if open:
         webbrowser.open_new('file://{}'.format(output_file))

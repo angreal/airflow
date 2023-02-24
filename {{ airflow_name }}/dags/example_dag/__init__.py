@@ -8,7 +8,7 @@ log = logging.getLogger()
 def _choosing_best_model(ti: TaskInstance):
     """Given a set of accuracies, determine if any model is 'accurate' or not. """
     accuracies = ti.xcom_pull(
-        task_ids=["training_model_A", "training_model_B", "training_model_C"]
+        task_ids=["train_model_A", "train_model_B", "train_model_C"]
     )
     if max(accuracies) > 8:
         return "accurate"
