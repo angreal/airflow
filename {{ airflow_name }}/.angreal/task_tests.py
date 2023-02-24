@@ -25,15 +25,15 @@ def run_tests(integrity=False,full=False,open=False):
 
     output_file = os.path.realpath(os.path.join(cwd,'htmlcov','index.html'))
 
-    print(integrity,full,open)
-
+    my_env = {**os.environ, **{"AIRFLOW_HOME":"/tmp"}}
+    
     if integrity:
-        subprocess.run(f"{venv_python} -m pytest -vvv tests/integrity",shell=True, cwd=cwd)
+        subprocess.run(f'{venv_python} -m pytest tests/integrity',shell=True, cwd=cwd, env=my_env)
         open=False
     if full:
-        subprocess.run(f"{venv_python} -m pytest -vvv --cov=dags --cov-report html --cov-report term tests/",shell=True, cwd=cwd)
+        subprocess.run(f'{venv_python} -m pytest -vvv --cov=dags --cov-report html --cov-report term tests/',shell=True, cwd=cwd,env=my_env)
     if not integrity and not full:
-        subprocess.run(f"{venv_python} -m pytest -vvv --cov=dags --cov-report html --cov-report term tests/unit",shell=True, cwd=cwd)
+        subprocess.run(f'{venv_python} -m pytest -vvv --cov=dags --cov-report html --cov-report term tests/unit',shell=True, cwd=cwd,env=my_env)
     if open:
         webbrowser.open_new('file://{}'.format(output_file))
 

@@ -3,7 +3,7 @@ from random import randint
 
 from airflow.models.taskinstance import TaskInstance
 
-log = logging.getLogger()
+
 
 def _choosing_best_model(ti: TaskInstance):
     """Given a set of accuracies, determine if any model is 'accurate' or not. """

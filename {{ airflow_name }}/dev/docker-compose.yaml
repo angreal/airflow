@@ -1,5 +1,5 @@
 version: '3'
-name: this-airflow
+name: {{ airflow_name }}
 
 # ====================================== AIRFLOW ENVIRONMENT VARIABLES =======================================
 x-airflow-common:
