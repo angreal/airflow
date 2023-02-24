@@ -1,9 +1,9 @@
-from contextlib import contextmanager
-import os
 import logging
+import os
+from contextlib import contextmanager
 
-from airflow.models import DagBag, Variable, Connection
 from airflow.hooks.base import BaseHook
+from airflow.models import Connection, DagBag, Variable
 
 ENV_VARS_NONE = (
     "PYTEST_THEME"
@@ -14,7 +14,7 @@ def pytest_itemcollected(item):
     use test doc strings as messages for the testing suite
     """
     if item._obj.__doc__:
-        item._nodeid = f"{item.obj.__doc__.strip().ljust(50,' ')[:50]}{str(item._nodeid).ljust(100,' ')[:50]}"
+        item._nodeid = f"{item.obj.__doc__.strip().ljust(50,' ')[:50]}"
 
 
 @contextmanager
@@ -39,7 +39,7 @@ def get_import_errors():
 
         def strip_path_prefix(path):
             return os.path.relpath(path, os.environ.get("AIRFLOW_HOME"))
-        
+
         # we prepend "(None,None)" to ensure that a test object is always created even if its a no op.
         return [(None, None)] + [
             (strip_path_prefix(k), v.strip()) for k, v in dag_bag.import_errors.items()
@@ -50,18 +50,18 @@ def get_import_errors():
 def os_getenv_monkeypatch(key: str, *args, **kwargs):
 
     default=None
-    if args: 
+    if args:
         default = args[0]
     if kwargs:
         default = kwargs.get('default',None)
-    
+
     env_value = os.environ.get(key,None)
 
     if env_value:
         return env_value
     if (
         key in ENV_VARS_NONE and default is None
-    ):  
+    ):
         return None
     if default:
         return default

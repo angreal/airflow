@@ -7,9 +7,13 @@ from angreal.integrations.venv import VirtualEnv, venv_required
 
 venv_location = os.path.join(angreal.get_root(),'..','.venv')
 cwd = os.path.join(angreal.get_root(), '..')
+requirements = os.path.join(cwd,'dev_requirements.txt')
 venv_python = VirtualEnv(venv_location).ensure_directories.env_exe
 
-@venv_required(venv_location)
+
+
+
+@venv_required(venv_location,requirements=requirements)
 @angreal.command(name='run-tests', about="run our test suite. default is unit tests only")
 @angreal.argument(name="integration", long="integration", short='i', takes_value=False, help="run integration tests only")
 @angreal.argument(name="full", long="full", short='f', takes_value=False, help="run integration and unit tests")
@@ -31,34 +35,34 @@ def run_tests(integration=False,full=False,open=False):
         webbrowser.open_new('file://{}'.format(output_file))
 
 
-@venv_required(venv_location)
-@angreal.command(name='static-tests', about="run static analyses on our project")
-@angreal.argument(name="open", long="open", short='o', takes_value=False, help="open results in web browser")
-def static(open):
-    subprocess.run(
-        (
-            f"{venv_python} -m mypy airflow_provider_this_provider --ignore-missing-imports --html-report typing_report"
-        ),
-        shell=True,
-        cwd=cwd
-    )
+# @venv_required(venv_location,requirements=requirements)
+# @angreal.command(name='static-tests', about="run static analyses on our project")
+# @angreal.argument(name="open", long="open", short='o', takes_value=False, help="open results in web browser")
+# def static(open):
+#     subprocess.run(
+#         (
+#             f"{venv_python} -m mypy airflow_provider_this_provider --ignore-missing-imports --html-report typing_report"
+#         ),
+#         shell=True,
+#         cwd=cwd
+#     )
 
-    if open:
-        webbrowser.open(f'file:://{os.path.join(cwd,"typing_report","index.html")}')
+#     if open:
+#         webbrowser.open(f'file:://{os.path.join(cwd,"typing_report","index.html")}')
 
 
-@venv_required(venv_location)
-@angreal.command(name='lint', about="lint our project")
-@angreal.argument(name="open", long="open", short='o', takes_value=False, help="open results in web browser")
-def lint(open):
+# @venv_required(venv_location,requirements=requirements)
+# @angreal.command(name='lint', about="lint our project")
+# @angreal.argument(name="open", long="open", short='o', takes_value=False, help="open results in web browser")
+# def lint(open):
 
-    subprocess.run(
-        (
-        "pre-commit run --all-files"
-        ),
-        shell=True,
-        cwd=cwd
-    )
+#     subprocess.run(
+#         (
+#         "pre-commit run --all-files"
+#         ),
+#         shell=True,
+#         cwd=cwd
+#     )
 
-    if open:
-        webbrowser.open(f'file:://{os.path.join(cwd,"typing_report","index.html")}')
+#     if open:
+#         webbrowser.open(f'file:://{os.path.join(cwd,"typing_report","index.html")}')

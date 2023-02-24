@@ -4,7 +4,7 @@ AIRFLOW__VAR_BAR='{"hello":"world"}'
 AIRFLOW_CONN_MY_PROD_DATABASE_URI='my-conn-type://login:password@host:port/schema?param1=val1&param2=val2'
 
 
-## Airflow 2.3 + 
+## Airflow 2.3 +
 #export AIRFLOW_CONN_MY_PROD_DATABASE_JSON='{
 #    "conn_type": "my-conn-type",
 #    "login": "my-login",
