@@ -4,12 +4,12 @@ name: this-airflow
 # ====================================== AIRFLOW ENVIRONMENT VARIABLES =======================================
 x-airflow-common:
   &airflow-common
+  env_file: env_vars.txt
   build:
     context: ..
     dockerfile: dev/Dockerfile
     args:
       IMAGE_NAME: "${IMAGE_NAME:-apache/airflow:2.3.4}"
-  user: "${AIRFLOW_UID}:0"
   environment:
     &airflow-common-env
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
@@ -29,8 +29,7 @@ x-airflow-common:
     - ../plugins:/opt/airflow/plugins
     - ../packages.txt:/packages.txt
     - ../requirements.txt:/requirements.txt
-    - ./env_vars.txt:/env_vars.txt
-    
+
 # ====================================== /AIRFLOW ENVIRONMENT VARIABLES ======================================
 
 services:
@@ -150,4 +149,3 @@ services:
         condition: service_completed_successfully
       postgres:
         condition: service_healthy
- 

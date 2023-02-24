@@ -1,1 +1,1 @@
-nano
+wget

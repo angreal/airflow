@@ -1,8 +1,12 @@
-from airflow import DAG
-from airflow.operators.python import PythonOperator, BranchPythonOperator
-from airflow.operators.bash import BashOperator
+import os
 from datetime import datetime
 from random import randint
+
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import BranchPythonOperator, PythonOperator
+
+from airflow import DAG
+
 
 
 def _choosing_best_model(ti):

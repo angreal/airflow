@@ -1,5 +1,10 @@
-# Created by .ignore support plugin (hsz.mobi)
-### Python template
+
+
+## Airflow
+webserver_config.py
+airflow.cfg
+logs/scheduler/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -111,7 +116,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-# .env
+.env
 .venv
 env/
 venv/
