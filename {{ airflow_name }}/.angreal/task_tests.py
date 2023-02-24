@@ -35,34 +35,18 @@ def run_tests(integration=False,full=False,open=False):
         webbrowser.open_new('file://{}'.format(output_file))
 
 
-# @venv_required(venv_location,requirements=requirements)
-# @angreal.command(name='static-tests', about="run static analyses on our project")
-# @angreal.argument(name="open", long="open", short='o', takes_value=False, help="open results in web browser")
-# def static(open):
-#     subprocess.run(
-#         (
-#             f"{venv_python} -m mypy airflow_provider_this_provider --ignore-missing-imports --html-report typing_report"
-#         ),
-#         shell=True,
-#         cwd=cwd
-#     )
+@venv_required(venv_location,requirements=requirements)
+@angreal.command(name='lint', about="lint our project")
+@angreal.argument(name="open", long="open", short='o', takes_value=False, help="open results in web browser")
+def lint(open):
 
-#     if open:
-#         webbrowser.open(f'file:://{os.path.join(cwd,"typing_report","index.html")}')
+    subprocess.run(
+        (
+        "pre-commit run --all-files"
+        ),
+        shell=True,
+        cwd=cwd
+    )
 
-
-# @venv_required(venv_location,requirements=requirements)
-# @angreal.command(name='lint', about="lint our project")
-# @angreal.argument(name="open", long="open", short='o', takes_value=False, help="open results in web browser")
-# def lint(open):
-
-#     subprocess.run(
-#         (
-#         "pre-commit run --all-files"
-#         ),
-#         shell=True,
-#         cwd=cwd
-#     )
-
-#     if open:
-#         webbrowser.open(f'file:://{os.path.join(cwd,"typing_report","index.html")}')
+    if open:
+        webbrowser.open(f'file:://{os.path.join(cwd,"typing_report","index.html")}')
