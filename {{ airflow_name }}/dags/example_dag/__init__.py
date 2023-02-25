@@ -4,7 +4,6 @@ from random import randint
 from airflow.models.taskinstance import TaskInstance
 
 
-
 def _choosing_best_model(ti: TaskInstance):
     """Given a set of accuracies, determine if any model is 'accurate' or not. """
     accuracies = ti.xcom_pull(

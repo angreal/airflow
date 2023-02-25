@@ -7,7 +7,8 @@ from angreal.integrations.venv import VirtualEnv
 
 def init():
     os.chdir("{{ airflow_name }}")
-    VirtualEnv(".venv", now=True, requirements="dev_requirements.txt")
+    VirtualEnv(".venv", now=True, requirements="dev_requirements.txt").install_requirements()
+
     g = Git()
     g.init()
     g.add('.')

@@ -1,7 +1,7 @@
 # Airflow Template
 
 
-Bootstrap a local airflow environment - fast. 
+Bootstrap a local airflow environment - fast.
 
 ## Features
 

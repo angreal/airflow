@@ -1,11 +1,11 @@
 
 from datetime import datetime
 
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import BranchPythonOperator, PythonOperator
 from example_dag import _choosing_best_model, _train_model
 
 from airflow import DAG
-from airflow.operators.bash import BashOperator
-from airflow.operators.python import BranchPythonOperator, PythonOperator
 
 # Generate 3 model training scenarios
 train_model_tasks = [
