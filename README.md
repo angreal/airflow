@@ -3,6 +3,8 @@
 
 Bootstrap a local airflow environment - fast.
 
+``` pip install angreal && angreal init https://github.com/angreal/airflow.git ```
+
 ## Features
 
 ```
