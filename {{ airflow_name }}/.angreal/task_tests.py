@@ -11,10 +11,11 @@ requirements = os.path.join(cwd,'dev_requirements.txt')
 venv_python = VirtualEnv(venv_location).ensure_directories.env_exe
 
 
+tests = angreal.command_group(name="test", about="commands for executing tests")
 
 
-
-@angreal.command(name='run-tests', about="run our test suite. default is unit tests only")
+@tests()
+@angreal.command(name='run', about="run our test suite. default is unit tests only")
 @angreal.argument(name="integrity", long="integrity", short='i', takes_value=False, help="run integrity tests only")
 @angreal.argument(name="full", long="full", short='f', takes_value=False, help="run integration and unit tests")
 @angreal.argument(name="open", long="open", short='o', takes_value=False, help="open results in web browser")
@@ -41,7 +42,7 @@ def run_tests(integrity=False,full=False,open=False):
         webbrowser.open_new('file://{}'.format(output_file))
 
 
-
+@tests()
 @angreal.command(name='lint', about="lint our project")
 @angreal.argument(name="open", long="open", short='o', takes_value=False, help="open results in web browser")
 @venv_required(venv_location,requirements=requirements)
