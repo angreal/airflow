@@ -1,6 +1,6 @@
 import pytest
 
-from ..conftest import get_import_errors
+from ..conftest import get_dag_bag, get_import_errors
 
 
 @pytest.mark.parametrize(
@@ -10,3 +10,8 @@ def test_file_imports(rel_path, rv):
     """Test for import errors on a DAG files"""
     if rel_path and rv:  # Make sure our no op test doesn't raise an error
         raise Exception(f"{rel_path} failed to import with message \n {rv}")
+
+
+def test_dags_found():
+    """Test the DAG folder holds at least one DAG"""
+    assert get_dag_bag().dags, "no DAG was found in the dags/ folder"

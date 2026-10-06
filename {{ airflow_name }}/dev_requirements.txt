@@ -1,5 +1,5 @@
 -r requirements.txt
+apache-airflow=={{ airflow_version }}
 pytest
 pytest-cov
-apache-airflow
 pre-commit

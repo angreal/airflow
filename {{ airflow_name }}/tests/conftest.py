@@ -1,13 +1,21 @@
 import logging
 import os
+import sys
 from contextlib import contextmanager
 
-from airflow.hooks.base import BaseHook
-from airflow.models import Connection, DagBag, Variable
+DAGS_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "dags")
+# Point Airflow at the project's dags/ folder and make it importable, as the DAG processor does.
+os.environ.setdefault("AIRFLOW__CORE__DAGS_FOLDER", DAGS_FOLDER)
+if DAGS_FOLDER not in sys.path:
+    sys.path.insert(0, DAGS_FOLDER)
+
+from airflow.dag_processing.dagbag import DagBag
+from airflow.sdk import BaseHook, Connection, Variable
 
 ENV_VARS_NONE = (
     "PYTEST_THEME"
 )
+
 
 def pytest_itemcollected(item):
     """
@@ -30,15 +38,23 @@ def suppress_logging(namespace):
     finally:
         logger.disabled = old_value
 
+def get_dag_bag():
+    """
+    Parse the project's dags/ folder
+    """
+    with suppress_logging("airflow"):
+        return DagBag(dag_folder=DAGS_FOLDER)
+
+
 def get_import_errors():
     """
     Generate a tuple for import errors in the dag bag
     """
     with suppress_logging("airflow"):
-        dag_bag = DagBag(include_examples=False)
+        dag_bag = get_dag_bag()
 
         def strip_path_prefix(path):
-            return os.path.relpath(path, os.environ.get("AIRFLOW_HOME"))
+            return os.path.relpath(path, DAGS_FOLDER)
 
         # we prepend "(None,None)" to ensure that a test object is always created even if its a no op.
         return [(None, None)] + [
@@ -77,7 +93,7 @@ def basehook_get_connection_monkeypatch(key: str, *args, **kwargs):
     print(
         f"Attempted to fetch connection during parse returning an empty Connection object for {key}"
     )
-    return Connection(key)
+    return Connection(conn_id=key, conn_type="generic")
 BaseHook.get_connection = basehook_get_connection_monkeypatch
 # # =========== /MONKEYPATCH BASEHOOK.GET_CONNECTION() ===========
 
@@ -94,13 +110,13 @@ class magic_dict(dict):
         return {}.get(key, "MOCKED_KEY_VALUE")
 
 
-def variable_get_monkeypatch(key: str, default_var=None, deserialize_json=False):
+def variable_get_monkeypatch(key: str, default=None, deserialize_json=False, **kwargs):
     print(
         f"Attempted to get Variable value during parse, returning a mocked value for {key}"
     )
 
-    if default_var:
-        return default_var
+    if default:
+        return default
     if deserialize_json:
         return magic_dict()
     return "NON_DEFAULT_MOCKED_VARIABLE_VALUE"

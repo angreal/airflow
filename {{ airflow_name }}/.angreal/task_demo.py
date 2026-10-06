@@ -4,37 +4,36 @@ import subprocess
 import angreal
 
 cwd = os.path.join(angreal.get_root(), '..')
-docker_compose = os.path.join(angreal.get_root(), '..', 'dev','docker-compose.yaml')
-logs = os.path.join(angreal.get_root(), '..', 'dev','logs')
+compose_file = os.path.join(angreal.get_root(), '..', 'dev', 'docker-compose.yaml')
+logs = os.path.join(angreal.get_root(), '..', 'logs')
+compose = f"docker compose -f {compose_file}"
 demo = angreal.command_group(name="demo", about="commands for controlling the demo environment")
+
+
+def _run(command):
+    rv = subprocess.run(command, shell=True, cwd=cwd)
+    if rv.returncode != 0:
+        raise SystemExit(rv.returncode)
 
 
 @demo()
 @angreal.command(name="start", about="start services for example dags")
 def demo_start():
-    subprocess.run(
-        	(f"docker-compose -f {docker_compose} build --no-cache && docker-compose -f {docker_compose} up -d"),
-            shell=True,
-            cwd=cwd
-    )
+    _run(f"{compose} build --no-cache && {compose} up -d --wait")
+
 
 @demo()
 @angreal.command(name="stop", about="stop services for example dags")
 def demo_stop():
-    subprocess.run(
-        	(f"docker-compose -f {docker_compose} down"),
-            shell=True,
-            cwd=cwd
-    )
+    _run(f"{compose} down")
+
 
 @demo()
 @angreal.command(name="clean", about="shut down services and remove files")
 def demo_clean():
-    subprocess.run(
-        	(f"docker-compose -f {docker_compose} down --volumes --remove-orphans", f"rm -rf {logs}/*"),
-            shell=True,
-            cwd=cwd
-    )
+    _run(f"{compose} down --volumes --remove-orphans")
+    _run(f"find {logs} -mindepth 1 ! -name .empty -delete")
+
 
 @demo()
 @angreal.command(name="restart", about="restart all service")

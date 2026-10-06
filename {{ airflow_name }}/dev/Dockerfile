@@ -2,9 +2,7 @@
 ARG IMAGE_NAME="apache/airflow:{{airflow_version}}"
 FROM ${IMAGE_NAME}
 
-
-
-#install library requirements.
+# install system packages listed in packages.txt
 COPY packages.txt .
 USER root
 RUN if [[ -s packages.txt ]]; then \
@@ -13,12 +11,11 @@ RUN if [[ -s packages.txt ]]; then \
     && rm -rf /var/lib/apt/lists/*; \
   fi
 
-## install python requirements
-# Install python packages
+# install python requirements, keeping the Airflow version of the base image
 USER airflow
 COPY requirements.txt .
 RUN if grep -Eqx 'apache-airflow\s*[=~>]{1,2}.*' requirements.txt; then \
     echo >&2 "Set Apache Airflow version via the Dockerfile, not requirements!";  exit 1; \
   fi; \
-  pip install --no-cache-dir -q -r requirements.txt
-COPY --chown=airflow:airflow . .
+  pip install --no-cache-dir -q "apache-airflow==${AIRFLOW_VERSION}" -r requirements.txt
+COPY --chown=airflow:0 . .
