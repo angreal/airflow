@@ -1,10 +1,14 @@
+from __future__ import annotations
+
 import logging
 from random import randint
+from typing import TYPE_CHECKING
 
-from airflow.models.taskinstance import TaskInstance
+if TYPE_CHECKING:
+    from airflow.sdk.types import RuntimeTaskInstanceProtocol
 
 
-def _choosing_best_model(ti: TaskInstance):
+def _choosing_best_model(ti: RuntimeTaskInstanceProtocol):
     """Given a set of accuracies, determine if any model is 'accurate' or not. """
     accuracies = ti.xcom_pull(
         task_ids=["train_model_A", "train_model_B", "train_model_C"]
