@@ -9,11 +9,7 @@ name: {{ airflow_name }}
 # ====================================== AIRFLOW ENVIRONMENT VARIABLES =======================================
 x-airflow-common:
   &airflow-common
-  build:
-    context: ..
-    dockerfile: dev/Dockerfile
-    args:
-      IMAGE_NAME: "${IMAGE_NAME:-apache/airflow:{{airflow_version}}}"
+  # built once by the airflow-init service below, shared by every Airflow service
   image: {{ airflow_name }}-airflow:latest
   user: "${AIRFLOW_UID:-50000}:0"
   environment:
@@ -56,6 +52,11 @@ services:
 
   airflow-init:
     <<: *airflow-common
+    build:
+      context: ..
+      dockerfile: dev/Dockerfile
+      args:
+        IMAGE_NAME: "${IMAGE_NAME:-apache/airflow:{{airflow_version}}}"
     entrypoint: /bin/bash
     command:
       - -c
