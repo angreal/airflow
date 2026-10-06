@@ -25,7 +25,6 @@ jobs:
       PYTHON_VERSION: "3.12"
       # angreal's VirtualEnv creates the venv with uv; pin its Python.
       UV_PYTHON: "3.12"
-      TEMPLATE_DIR: ${{ github.workspace }}/../template
       RENDER_DIR: ${{ github.workspace }}/../render
     steps:
       - uses: actions/checkout@v7
@@ -43,7 +42,7 @@ jobs:
 
       - name: Install angreal
         run: |
-          python -m pip install --upgrade angreal
+          python -m pip install --upgrade "angreal>=2.9.2"
           angreal --version
 
       - name: Use the Airflow constraints file
@@ -68,21 +67,11 @@ jobs:
           path: ~/.cache/pre-commit
           key: pre-commit-${{ runner.os }}-${{ hashFiles('*/.pre-commit-config.yaml') }}
 
-      - name: Copy the template without .git
-        # Workaround: released angreal (<= 2.9.1) fast-forward-pulls a local template
-        # folder that is a git checkout, which can fail or change the checkout. Render
-        # from a copy without .git. Remove this once angreal >= 2.9.2 is released
-        # (fix in angreal PR #145, task ANG-T-0038) and render "$GITHUB_WORKSPACE".
-        run: |
-          mkdir -p "$TEMPLATE_DIR"
-          git archive HEAD | tar -x -C "$TEMPLATE_DIR"
-          ls -la "$TEMPLATE_DIR"
-
       - name: Render the template
         run: |
           mkdir -p "$RENDER_DIR"
           cd "$RENDER_DIR"
-          angreal init --defaults "$TEMPLATE_DIR"
+          angreal init --defaults "$GITHUB_WORKSPACE"
           test -d "$RENDER_DIR/airflow/.angreal"
           git -C "$RENDER_DIR/airflow" log --oneline -1
 
